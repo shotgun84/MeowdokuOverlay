@@ -135,8 +135,9 @@ class OverlayService : Service() {
                     if (bmp == null) Thread.sleep(500)
                 }
                 if (bmp == null) throw IllegalStateException("screenshot empty after 4 tries. $lastErr")
+                val shot: Bitmap = bmp
                 handler.post { Toast.makeText(this, "Solving…", Toast.LENGTH_SHORT).show() }
-                val sol = Solver.solveBitmap(bmp)
+                val sol = Solver.solveBitmap(shot)
                 handler.post { showOverlay(sol) }
             } catch (e: Exception) {
                 handler.post { showError("Solve failed:\n${e.message}\n\nSend a screenshot of this to the dev.") }
