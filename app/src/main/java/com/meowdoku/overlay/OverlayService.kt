@@ -47,7 +47,7 @@ class OverlayService : Service() {
         startFg()
         addFab()
         val pm = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        try { mediaProjection = pm.getMediaProjection(Service.RESULT_OK, projectionIntent!!) }
+        try { mediaProjection = pm.getMediaProjection(android.app.Activity.RESULT_OK, projectionIntent!!) }
         catch (e: Exception) { Toast.makeText(this, "Capture permission lost, reopen app", Toast.LENGTH_LONG).show() }
     }
 
