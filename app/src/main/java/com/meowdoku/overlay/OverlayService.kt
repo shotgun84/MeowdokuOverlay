@@ -128,14 +128,7 @@ class OverlayService : Service() {
         Toast.makeText(this, "Capturing…", Toast.LENGTH_SHORT).show()
         Thread {
             try {
-                var bmp: Bitmap? = null
-                var lastErr = ""
-                repeat(4) { attempt ->
-                    try { bmp = screenshot() } catch (e: Exception) { lastErr = e.message ?: e.toString() }
-                    if (bmp == null) Thread.sleep(500)
-                }
-                if (bmp == null) throw IllegalStateException("screenshot empty after 4 tries. $lastErr")
-                val shot: Bitmap = bmp
+                val shot = grabScreenshot()
                 handler.post { Toast.makeText(this, "Solving…", Toast.LENGTH_SHORT).show() }
                 val sol = Solver.solveBitmap(shot)
                 handler.post { showOverlay(sol) }
@@ -143,6 +136,19 @@ class OverlayService : Service() {
                 handler.post { showError("Solve failed:\n${e.message}\n\nSend a screenshot of this to the dev.") }
             }
         }.start()
+    }
+
+    /** Screenshot with retries. Throws on failure. Runs on worker thread. */
+    private fun grabScreenshot(): Bitmap {
+        var lastErr = ""
+        repeat(4) {
+            try {
+                val b: Bitmap? = screenshot()
+                if (b != null) return b
+            } catch (e: Exception) { lastErr = e.message ?: e.toString() }
+            Thread.sleep(500)
+        }
+        throw IllegalStateException("screenshot empty after 4 tries. $lastErr")
     }
 
     private fun screenshot(): Bitmap? {
