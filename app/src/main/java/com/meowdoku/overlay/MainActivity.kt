@@ -41,7 +41,8 @@ class MainActivity : Activity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAP && resultCode == RESULT_OK && data != null) {
-            OverlayService.projectionIntent = data.clone() as Intent
+            OverlayService.projectionIntent = Intent(data)
+            OverlayService.projectionCode = resultCode
             val svc = Intent(this, OverlayService::class.java)
             if (Build.VERSION.SDK_INT >= 26) startForegroundService(svc) else startService(svc)
             Toast.makeText(this, "Floating button started — open Meowdoku", Toast.LENGTH_LONG).show()
